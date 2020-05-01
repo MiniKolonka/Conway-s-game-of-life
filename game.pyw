@@ -174,7 +174,7 @@ class Field:
 	def update_state(self) -> None:
 		#Updates field
 		#Переменная matrix_of_neighbors нужна для "одновременного" обновления всех ячеек.
-		#Если реализовать поочерёдное обновление - результаты будут в корне отличается
+		#Если реализовать поочерёдное обновление - результаты будут в корне отличается.
 		self.matrix_of_neighbors = numpy.array([0] * self.size[0] * self.size[0]).reshape(self.size[0], self.size[1])
 
 		for index_of_diagonal, diagonal  in enumerate(self.field):
