@@ -7,16 +7,26 @@ class Game:
 	def __init__(self) -> None:
 		self.display = pygame.display.set_mode((1200, 1000))
 		self.continue_simulation = True
-		self.speed = 40 #frame rate
+		self.speed = 60 #frame rate
+		self.field = Field((100,100))
+		self.clock = pygame.time.Clock()
 
-	def start(self) -> None:
 		pygame.init()
 		pygame.display.set_caption("Conway's Game of Life")
 
-		field = Field((100,100))
+	def menu(self) -> None:
+		while True:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					quit()
+				if event.type == pygame.KEYDOWN:
+					return
 
-		clock = pygame.time.Clock()
+			self.draw_menu()
+			self.clock.tick(self.speed)
 
+	def game(self) -> None:
 		while True:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -26,38 +36,34 @@ class Game:
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_SPACE:
 						self.continue_simulation = not self.continue_simulation
+					if event.key == pygame.K_ESCAPE:
+						return
 
 					if event.key == pygame.K_UP:
 						self.speed = self.speed + 1 if self.speed != 72 else self.speed
-						print(self.speed)
 					elif event.key == pygame.K_DOWN:
 						self.speed = self.speed - 1 if self.speed != 1 else 1
-						print(self.speed)
 
 					if event.key == pygame.K_r:
-						field.random_fill()
+						self.field.random_fill()
 					elif event.key == pygame.K_c:
-						field.clear_field()
-
-					if event.key == pygame.K_ESCAPE:
-						pygame.quit()
-						quit()
+						self.field.clear_field()
 
 				pressed = pygame.mouse.get_pressed()
 				mouse_position = pygame.mouse.get_pos()
 				if mouse_position[0] < 1001 and mouse_position[1] < 1001:
 					if pressed[0]:
-						field.field[mouse_position[1] // 10][mouse_position[0] // 10] = True
+						self.field.field[mouse_position[1] // 10][mouse_position[0] // 10] = True
 					if pressed[2]:
-						field.field[mouse_position[1] // 10][mouse_position[0] // 10] = False			
+						self.field.field[mouse_position[1] // 10][mouse_position[0] // 10] = False			
 
 			if self.continue_simulation:
-				field.update_state()
-			self.draw(field.field)
+				self.field.update_state()
+			self.draw_game(self.field.field)
 
-			clock.tick(self.speed)
+			self.clock.tick(self.speed)
 
-	def draw(self, field: numpy.array) -> None:
+	def draw_game(self, field: numpy.array) -> None:
 		self.display.fill((49,49,49))
 		number_of_cells =  0
 
@@ -90,6 +96,49 @@ class Game:
 		self.display.blit(number_of_cells, (1070, 98))
 
 		pygame.display.update()
+
+	def draw_menu(self) -> None:
+		self.display.fill((40,40,40))
+
+		gfxdraw.box(self.display, ((0, 0), (1200, 215)), (49, 49, 49))
+		gfxdraw.box(self.display, ((0, 440), (1200, 560)), (49, 49, 49))
+		gfxdraw.box(self.display, ((1040, 215), (235, 345)), (49, 49, 49))
+		gfxdraw.box(self.display, ((0, 215), (235, 345)), (49, 49, 49))
+		gfxdraw.box(self.display, ((310, 850), (580, 85)), (40,40,40))
+
+		title = pygame.font.Font(None, 72)
+		text = title.render("Кнопки:", 1, (255, 255, 255))
+		self.display.blit(text, (500, 155))
+
+		paragraph = pygame.font.Font(None, 42)
+		text = paragraph.render("• R - заполнить поле случайными клетками.", 1, (255, 255, 255))
+		text_2 = paragraph.render("• С -  очистить поле.", 1, (255, 255, 255))
+		text_3 = paragraph.render("• Space -  остановить время.", 1, (255, 255, 255))
+		text_4 = paragraph.render("• Добавлять/Удалять клетки можно кликами мышки.", 1, (255, 255, 255))
+		text_5 = paragraph.render("(Используйте вместе с остановкой времени)", 1, (255, 255, 255))
+
+		self.display.blit(text, (275, 230))
+		self.display.blit(text_2, (275, 270))
+		self.display.blit(text_3, (275, 310))
+		self.display.blit(text_4, (275, 350))
+		self.display.blit(text_5, (325, 390))
+
+		mini_paragraph = pygame.font.Font(None, 36)
+		text = mini_paragraph.render("Прочитал? Гуд, жмякни на любую кнопку", 1, (255, 255, 255))
+		self.display.blit(text, (340, 880))
+
+		pygame.display.update()
+
+	def start(self) -> None:
+		while True:
+			self.menu()
+			self.game()
+
+
+
+
+
+
 
 class Field:
 	def __init__(self, size: tuple = (100, 100)) -> None:
