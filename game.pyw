@@ -7,7 +7,7 @@ class Game:
 	def __init__(self) -> None:
 		self.display = pygame.display.set_mode((1200, 1000))
 		self.continue_simulation = True
-		self.speed = 20 #frame rate
+		self.speed = 40 #frame rate
 
 	def start(self) -> None:
 		pygame.init()
@@ -43,13 +43,13 @@ class Game:
 						pygame.quit()
 						quit()
 
-				if event.type == pygame.MOUSEBUTTONDOWN:
-					mouse_position = pygame.mouse.get_pos()
-					if mouse_position[0] < 1001 and mouse_position[1] < 1001: 
-						if event.button == 1:
-							field.field[mouse_position[1] // 10][mouse_position[0] // 10] = True
-						if event.button == 3:
-							field.field[mouse_position[1] // 10][mouse_position[0] // 10] = False
+				pressed = pygame.mouse.get_pressed()
+				mouse_position = pygame.mouse.get_pos()
+				if mouse_position[0] < 1001 and mouse_position[1] < 1001:
+					if pressed[0]:
+						field.field[mouse_position[1] // 10][mouse_position[0] // 10] = True
+					if pressed[2]:
+						field.field[mouse_position[1] // 10][mouse_position[0] // 10] = False			
 
 			if self.continue_simulation:
 				field.update_state()
