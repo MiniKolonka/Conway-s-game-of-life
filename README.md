@@ -6,4 +6,4 @@ r - fill in the field with random values.
 с - clear the field.
 space - stop time.
 left mouse button - add living cell.
-right mouse button - "kill" the cage.
+right mouse button - "kill" the cell.
